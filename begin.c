@@ -44,6 +44,7 @@ void serbest_birakma( void ) {
             free(tmp);
         }
     }
+    root = NULL; root2 = NULL;
 }
 
 
@@ -64,6 +65,7 @@ void ekleSondan(struct Node** root, int veri) {
         last->next = NULL;
     }
 }
+
 
 int ekleIndexten(struct Node** root, unsigned index, int veri) {
     // ekleIndexten(&root, n, x) şeklinde kullanılmalı
@@ -248,8 +250,5 @@ int main(int argc, char **argv) {
             enter_bekle();
         }
     }
-
-
-   return 0;
 }
 
