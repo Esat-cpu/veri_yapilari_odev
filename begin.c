@@ -183,9 +183,18 @@ int main(int argc, char **argv) {
         puts("4. Cikis");
         printf("Secin: ");
 
-        int secim, c;
-        scanf("%d", &secim);
-        while ((c = getchar()) != '\n' && c != EOF); // tampon temizleme
+        char input[2];
+        char* ptr;
+        long secim;
+        int c;
+
+        fgets(input, 2, stdin);
+        if (input[0] != '\n' && input[1] != '\n') {
+            while ((c = getchar()) != '\n' && c != EOF); // tampon temizleme
+        }
+        else continue;
+
+        secim = strtol(input, &ptr, 10);
 
         if (secim == 1) {
             int okuma = oku(dosyaadi);
@@ -237,7 +246,7 @@ int main(int argc, char **argv) {
             return 0;
         }
         else {
-            fprintf(stderr, "Geçerli cevap bir cevap girmediniz.\n");
+            fprintf(stderr, "Gecerli cevap bir cevap girmediniz.\n");
             enter_bekle();
         }
     }
