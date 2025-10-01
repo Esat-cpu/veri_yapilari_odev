@@ -24,10 +24,28 @@ char birinci[MAX_CH], ikinci[MAX_CH];
 int siralandi = 0;
 
 
+
 void enter_bekle( void ) {
     int c;
     while ((c = getchar()) != '\n' && c != EOF);
 }
+
+
+void serbest_birakma( void ) {
+    for (struct Node* iter = root; iter;) {
+        struct Node* tmp = iter;
+        iter = iter->next;
+        free(tmp);
+    }
+    if (!siralandi) {
+        for (struct Node* iter = root2; iter;) {
+            struct Node* tmp = iter;
+            iter = iter->next;
+            free(tmp);
+        }
+    }
+}
+
 
 void ekleSondan(struct Node** root, int veri) {
     if (*root == NULL) {
@@ -80,7 +98,7 @@ int ekleIndexten(struct Node** root, unsigned index, int veri) {
 }
 
 
-int oku(char* dosyaadi, char* birinci, char* ikinci) {
+int oku(char* dosyaadi) {
     // Dosya okunur, 'birinci' ve 'ikinci' isimli stringlere satırlardaki sayılar aktarılır
     FILE* dosya = fopen(dosyaadi, "r");
 
@@ -107,16 +125,19 @@ int oku(char* dosyaadi, char* birinci, char* ikinci) {
     return 0;
 }
 
+
 void listele() {
     // Dosyadan okunan değerler bağlı listelere aktarılır
+    // Önceden liste oluşturulduysa önce free edilir
+    serbest_birakma();
+    siralandi = 0;
+
     int boyut = 0, boyut2 = 0;
     long eklenen;
-    root = NULL;
-    root2 = NULL;
-    siralandi = 0;
 
     char *ptr;
     ptr = strtok(birinci, ",");
+
 
     while (ptr != NULL) {
         eklenen = strtol(ptr, &ptr, 10);
@@ -136,20 +157,6 @@ void listele() {
 }
 
 
-void serbest_birakma( void ) {
-    for (struct Node* iter = root; iter;) {
-        struct Node* tmp = iter;
-        iter = iter->next;
-        free(tmp);
-    }
-    if (!siralandi) {
-        for (struct Node* iter = root2; iter;) {
-            struct Node* tmp = iter;
-            iter = iter->next;
-            free(tmp);
-        }
-    }
-}
 
 
 
@@ -181,17 +188,17 @@ int main(int argc, char **argv) {
         while ((c = getchar()) != '\n' && c != EOF); // tampon temizleme
 
         if (secim == 1) {
-            int okuma = oku(dosyaadi, birinci, ikinci);
+            int okuma = oku(dosyaadi);
             if (okuma == 0) {
                 okundu = 1;
                 printf("Dosya Okundu.\n");
+                listele();
+                printf("Listeler olusturuldu.\n");
                 enter_bekle();
             } else {
                 fprintf(stderr, "Dosya Okunamadi.\n");
                 enter_bekle();
-                continue;
             }
-            listele();
         }
         else if (secim == 2) {
             if (!okundu) {
