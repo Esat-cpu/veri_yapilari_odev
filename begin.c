@@ -164,7 +164,6 @@ void listele() {
 int main(int argc, char **argv) {
     atexit(serbest_birakma);
 
-    // Dosya Okuma İşlemleri
     if (argc == 1) {
         fprintf(stderr, "Dosya ismini arguman olarak verin!\n");
         return 1;
@@ -172,7 +171,6 @@ int main(int argc, char **argv) {
 
     char* dosyaadi = argv[1];
     int okundu = 0;
-    char birinci[MAX_CH], ikinci[MAX_CH];
 
     while (1) {
         printf("\x1b[2J\x1b[H");
