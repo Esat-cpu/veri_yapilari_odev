@@ -10,6 +10,7 @@
 #include <string.h>
 #include <errno.h>
 
+// satırlardan alınabilecek max karakter sayısı
 #define MAX_CH 100
 
 
@@ -68,15 +69,13 @@ void ekleSondan(struct Node** root, int veri) {
 }
 
 
-int ekleIndexten(struct Node** root, unsigned index, int veri) {
-    // ekleIndexten(&root, n, x) şeklinde kullanılmalı
-    struct Node* node;
+int ekleIndexten(struct Node** root, unsigned index, struct Node* new) {
+    // ekleIndexten(&root, n, new) şeklinde kullanılmalı
+    // verilen linked list elemanını yeni listeye katar
 
     if (index == 0) {
-        node = malloc(sizeof(struct Node));
-        node->data = veri;
-        node->next = *root;
-        *root = node;
+        new->next = *root;
+        *root = new;
     }
     else {
         struct Node* iter = *root;
@@ -91,10 +90,8 @@ int ekleIndexten(struct Node** root, unsigned index, int veri) {
             }
         }
 
-        node = malloc(sizeof(struct Node));
-        node->data = veri;
-        node->next = iter->next;
-        iter->next = node;
+        new->next = iter->next;
+        iter->next = new;
     }
 
     return 0;
@@ -198,7 +195,7 @@ int main(int argc, char **argv) {
         int c;
 
         fgets(input, 2, stdin);
-        if (input[0] != '\n' && input[1] != '\n') {
+        if (input[0] != '\n') {
             while ((c = getchar()) != '\n' && c != EOF); // tampon temizleme
         }
         else continue;
