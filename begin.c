@@ -228,16 +228,18 @@ int main(int argc, char **argv) {
         puts("4. Cikis");
         printf("Secin: ");
 
-        char input[2];
+        char input[3];
         char* ptr;
         long secim;
         int c;
 
-        fgets(input, 2, stdin);
-        if (input[0] != '\n') {
+        fgets(input, 3, stdin);
+
+        if (input[0] == '\n') // boş girdi durumu
+            continue;
+        else if (input[1] != '\n') {
             while ((c = getchar()) != '\n' && c != EOF); // tampon temizleme
         }
-        else continue;
 
         secim = strtol(input, &ptr, 10);
 
