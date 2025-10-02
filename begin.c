@@ -167,13 +167,42 @@ void listele() {
 
 
 void sirala() {
-    // asil yer
+    // bagliliste1'i sıralar (bubble sort)
+    struct Node* onceki = NULL;
+    struct Node* last = NULL;
+    struct Node* iter;
+
+    for (int i = 0; i < boyut; i++) {
+        iter = bagliliste1;
+        while (iter->next != last) {
+            if (iter->data > iter->next->data) {
+                // listenin ilk elemanı ise başı kaybetmemek için
+                if (onceki == NULL) {
+                    bagliliste1 = iter->next;
+                }
+
+                // swap sonunda ilerleyen elemanla beraber iter de ilerlemiş olur
+                swap(onceki, iter, iter->next);
+            }
+            else {
+                iter = iter->next;
+            }
+
+            // 'onceki' boşsa listenin başını göstersin
+            // değilse bir eleman ilerlesin
+            if (onceki == NULL)
+                onceki = bagliliste1;
+            else
+                onceki = onceki->next;
+        }
+        onceki = NULL;
+        last = iter;
+    }
 }
 
 
 void digerine_kat() {
     ///////////////////////////////////////////////////////////////////////////////////////////
-
 }
 
 
