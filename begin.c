@@ -176,7 +176,7 @@ int main(int argc, char **argv) {
 
     char* dosyaadi;
 
-    if (argc == 1) {
+    if (argc == 1)
         dosyaadi = "veri.txt";
     else
         dosyaadi = argv[1];
@@ -218,6 +218,7 @@ int main(int argc, char **argv) {
                 enter_bekle();
             }
         }
+
         else if (secim == 2) {
             if (!okundu) {
                 fprintf(stderr, "Oncelikle dosyayi okumalisiniz.\n");
@@ -230,6 +231,7 @@ int main(int argc, char **argv) {
             printf("Tek listede siralandi.\n");
             enter_bekle();
         }
+
         else if (secim == 3) {
             if (!okundu) {
                 fprintf(stderr, "Oncelikle dosyayi okumalisiniz.\n");
@@ -261,10 +263,12 @@ int main(int argc, char **argv) {
                 enter_bekle();
             }
         }
+
         else if (secim == 4) {
             printf("Cikis Yapiliyor...\n");
             return 0;
         }
+
         else {
             fprintf(stderr, "Gecerli cevap bir cevap girmediniz.\n");
             enter_bekle();
