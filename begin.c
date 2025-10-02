@@ -1,8 +1,9 @@
 // Program bir dosyadaki ilk iki satırda bulunan, virgüllerle ayrılmış sayıları okur
-// Dosya ismi programa argüman olarak verilir (Örn: .\program.exe deneme.txt)
+// Dosya ismi programa argüman olarak verilir (Örn: .\program.exe deneme.txt) varsayılan veri.txt
 // Okunan sayılar iki linked list'te tutulur
 // Birinci liste küçükten büyüğe doğru sıralanır
 // İkinci liste bu kuralı bozmadan birinci listeye dahil edilir
+// Bağlı liste elemanlarının adresleriyle beraber değerleri yazılır
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -18,10 +19,10 @@ struct Node {
 };
 
 
-struct Node* root = NULL;
-struct Node* root2 = NULL;
+struct Node* bagliliste1 = NULL;
+struct Node* bagliliste2 = NULL;
 char birinci[MAX_CH], ikinci[MAX_CH];
-int siralandi = 0;
+int siralandi = 0, boyut = 0, boyut2 = 0;
 
 
 
@@ -32,19 +33,19 @@ void enter_bekle( void ) {
 
 
 void serbest_birakma( void ) {
-    for (struct Node* iter = root; iter;) {
+    for (struct Node* iter = bagliliste1; iter;) {
         struct Node* tmp = iter;
         iter = iter->next;
         free(tmp);
     }
     if (!siralandi) {
-        for (struct Node* iter = root2; iter;) {
+        for (struct Node* iter = bagliliste2; iter;) {
             struct Node* tmp = iter;
             iter = iter->next;
             free(tmp);
         }
     }
-    root = NULL; root2 = NULL;
+    bagliliste1 = NULL; bagliliste2 = NULL;
 }
 
 
@@ -134,7 +135,6 @@ void listele() {
     serbest_birakma();
     siralandi = 0;
 
-    int boyut = 0, boyut2 = 0;
     long eklenen;
 
     char *ptr;
@@ -143,7 +143,7 @@ void listele() {
 
     while (ptr != NULL) {
         eklenen = strtol(ptr, &ptr, 10);
-        ekleSondan(&root, eklenen);
+        ekleSondan(&bagliliste1, eklenen);
         boyut++;
         ptr = strtok(NULL, ",");
     }
@@ -152,33 +152,42 @@ void listele() {
 
     while (ptr != NULL) {
         eklenen = strtol(ptr, &ptr, 10);
-        ekleSondan(&root2, eklenen);
+        ekleSondan(&bagliliste2, eklenen);
         boyut2++;
         ptr = strtok(NULL, ",");
     }
 }
 
 
+void sirala() {
+    // asil yer
+}
 
+
+void digerine_kat() {
+    ///////////////////////////////////////////////////////////////////////////////////////////
+
+}
 
 
 
 int main(int argc, char **argv) {
     atexit(serbest_birakma);
 
-    if (argc == 1) {
-        fprintf(stderr, "Dosya ismini arguman olarak verin!\n");
-        return 1;
-    }
+    char* dosyaadi;
 
-    char* dosyaadi = argv[1];
+    if (argc == 1) {
+        dosyaadi = "veri.txt";
+    else
+        dosyaadi = argv[1];
+
     int okundu = 0;
 
     while (1) {
         printf("\x1b[2J\x1b[H");
         puts("---------- Menu ----------");
         puts("1. Dosyayi oku");
-        puts("2. Sirala");
+        puts("2. Sirala ve Birlestir");
         puts("3. Elemanlari ve adreslerini yaz");
         puts("4. Cikis");
         printf("Secin: ");
@@ -215,7 +224,11 @@ int main(int argc, char **argv) {
                 enter_bekle();
                 continue;
             }
-            // ---
+            sirala();
+            digerine_kat();
+            siralandi = 1;
+            printf("Tek listede siralandi.\n");
+            enter_bekle();
         }
         else if (secim == 3) {
             if (!okundu) {
@@ -223,21 +236,28 @@ int main(int argc, char **argv) {
                 enter_bekle();
                 continue;
             }
+
             if (siralandi) {
                 puts("Birlesmis listenin bellekteki adresleri ve degerleri:");
-                for (struct Node* iter = root; iter; iter = iter->next) {
+
+                for (struct Node* iter = bagliliste1; iter; iter = iter->next) {
                     printf("%p: %d ", iter, iter->data);
                 }
+
                 enter_bekle();
             } else {
                 puts("Birinci liste:");
-                for (struct Node* iter = root; iter; iter = iter->next) {
+
+                for (struct Node* iter = bagliliste1; iter; iter = iter->next) {
                     printf("%p: %d ", iter, iter->data);
                 }
+
                 puts("\nIkinci liste:");
-                for (struct Node* iter = root2; iter; iter = iter->next) {
+
+                for (struct Node* iter = bagliliste2; iter; iter = iter->next) {
                     printf("%p: %d ", iter, iter->data);
                 }
+
                 enter_bekle();
             }
         }
