@@ -98,6 +98,16 @@ int ekleIndexten(struct Node** root, unsigned index, struct Node* new) {
 }
 
 
+void swap(struct Node* onceki, struct Node* simdiki, struct Node* sonraki) {
+    // simdiki ile sonrakinin yerini değiştirip öncekini sonrakine bağlar
+    simdiki->next = sonraki->next;
+    sonraki->next = simdiki;
+    if (onceki != NULL) {
+        onceki->next = sonraki;
+    }
+}
+
+
 int oku(char* dosyaadi) {
     // Dosya okunur, 'birinci' ve 'ikinci' isimli stringlere satırlardaki sayılar aktarılır
     FILE* dosya = fopen(dosyaadi, "r");
