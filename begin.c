@@ -50,6 +50,7 @@ void serbest_birakma( void ) {
 }
 
 
+
 void ekleSondan(struct Node** root, int veri) {
     if (*root == NULL) {
         *root = malloc(sizeof(struct Node));
@@ -69,34 +70,6 @@ void ekleSondan(struct Node** root, int veri) {
 }
 
 
-int ekleIndexten(struct Node** root, unsigned index, struct Node* new) {
-    // ekleIndexten(&root, n, new) şeklinde kullanılmalı
-    // verilen linked list elemanını yeni listeye katar
-
-    if (index == 0) {
-        new->next = *root;
-        *root = new;
-    }
-    else {
-        struct Node* iter = *root;
-
-        // iter, index'ten bir önceki liste elemanına gelir
-        for (int i = 0; i < (index - 1); i++) {
-            if (iter->next != NULL) {
-                iter = iter->next;
-            } else {
-                fprintf(stderr, "Liste sınırı aşıldı.\n");
-                return 1;
-            }
-        }
-
-        new->next = iter->next;
-        iter->next = new;
-    }
-
-    return 0;
-}
-
 
 void swap(struct Node* onceki, struct Node* simdiki, struct Node* sonraki) {
     // simdiki ile sonrakinin yerini değiştirip öncekini sonrakine bağlar
@@ -106,6 +79,7 @@ void swap(struct Node* onceki, struct Node* simdiki, struct Node* sonraki) {
         onceki->next = sonraki;
     }
 }
+
 
 
 int oku(char* dosyaadi) {
@@ -134,6 +108,7 @@ int oku(char* dosyaadi) {
     fclose(dosya);
     return 0;
 }
+
 
 
 void listele() {
@@ -165,6 +140,7 @@ void listele() {
         ptr = strtok(NULL, ",");
     }
 }
+
 
 
 void sirala( void ) {
@@ -201,6 +177,7 @@ void sirala( void ) {
         last = iter;
     }
 }
+
 
 
 void digerine_kat( void ) {
