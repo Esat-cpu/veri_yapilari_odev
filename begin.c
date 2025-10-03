@@ -146,13 +146,12 @@ void listele() {
 void sirala( void ) {
     // bagliliste1'i sıralar (bubble sort)
     struct Node* onceki = NULL;
-    struct Node* last = NULL;
     struct Node* iter;
 
-    for (int i = 0; i < boyut; i++) {
+    for (int i = 1; i <= (boyut - 1); i++) {
         iter = bagliliste1;
 
-        while (iter->next != last) {
+        for (int j = 0; j < (boyut - i); j++) {
             if (iter->data > iter->next->data) {
                 // listenin ilk elemanı ise başı kaybetmemek için
                 if (onceki == NULL) {
@@ -174,7 +173,6 @@ void sirala( void ) {
                 onceki = onceki->next;
         }
         onceki = NULL;
-        last = iter;
     }
 }
 
