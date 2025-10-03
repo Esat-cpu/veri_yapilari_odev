@@ -1,5 +1,5 @@
 // Program bir dosyadaki ilk iki satırda bulunan, virgüllerle ayrılmış sayıları okur
-// Dosya ismi programa argüman olarak verilir (Örn: .\program.exe deneme.txt) varsayılan veri.txt
+// Dosya ismi programa argüman olarak verilir (Örn: .\program.exe deneme.txt) varsayılan: 'veri.txt'
 // Okunan sayılar iki linked list'te tutulur
 // Birinci liste küçükten büyüğe doğru sıralanır
 // İkinci liste bu kuralı bozmadan birinci listeye dahil edilir
@@ -141,6 +141,7 @@ void listele() {
     // Önceden liste oluşturulduysa önce free edilir
     serbest_birakma();
     siralandi = 0;
+    boyut = 0; boyut2 = 0;
 
     long eklenen;
 
@@ -166,7 +167,7 @@ void listele() {
 }
 
 
-void sirala() {
+void sirala( void ) {
     // bagliliste1'i sıralar (bubble sort)
     struct Node* onceki = NULL;
     struct Node* last = NULL;
@@ -174,6 +175,7 @@ void sirala() {
 
     for (int i = 0; i < boyut; i++) {
         iter = bagliliste1;
+
         while (iter->next != last) {
             if (iter->data > iter->next->data) {
                 // listenin ilk elemanı ise başı kaybetmemek için
@@ -201,8 +203,33 @@ void sirala() {
 }
 
 
-void digerine_kat() {
-    ///////////////////////////////////////////////////////////////////////////////////////////
+void digerine_kat( void ) {
+    // ikinci listenin elemanları birinci listeye
+    // küçükten büyüğe sırası bozulmadan yerleştirilir
+    struct Node* eleman;
+
+    for (int i = 0; i < boyut2; i++) {
+        eleman = bagliliste2;
+        bagliliste2 = bagliliste2->next;
+        struct Node* iter = bagliliste1;
+
+        if (iter->data > eleman->data) {
+            bagliliste1 = eleman;
+            eleman->next = iter;
+            continue;
+        }
+
+        for (int j = 0; j < (boyut - 1); j++) {
+            if (iter->next->data > eleman->data) {
+                eleman->next = iter->next;
+                iter->next = eleman;
+                break;
+            }
+            else {
+                iter = iter->next;
+            }
+        }
+    }
 }
 
 
@@ -260,6 +287,11 @@ int main(int argc, char **argv) {
         else if (secim == 2) {
             if (!okundu) {
                 fprintf(stderr, "Oncelikle dosyayi okumalisiniz.\n");
+                enter_bekle();
+                continue;
+            }
+            if (siralandi == 1) {
+                printf("Zaten tek listede sirali.\n");
                 enter_bekle();
                 continue;
             }
