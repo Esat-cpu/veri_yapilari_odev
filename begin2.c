@@ -125,8 +125,19 @@ int oku(char* dosyaadi) {
 }
 
 
+
 void serbest_birakma( void ) {
-    // .....................
+    if (root != NULL) {
+        struct Node* iter = root->next;
+        root->next = NULL;
+        root = NULL;
+
+        while (iter != NULL) {
+            struct Node* temp = iter;
+            iter = iter->next;
+            free(temp);
+        }
+    }
 }
 
 
