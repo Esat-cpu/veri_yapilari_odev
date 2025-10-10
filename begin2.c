@@ -145,6 +145,23 @@ void listele( void ) {
 
 
 
+struct Node* tersle(struct Node* root) {
+    struct Node* iter1 = root;
+    struct Node* iter2 = iter1->next;
+    struct Node* iter3 = iter2->next;
+
+    do {
+        iter2->next = iter1;
+        iter1 = iter2;
+        iter2 = iter3;
+        iter3 = iter3->next;
+    } while (iter1 != root);
+
+    return root->next;
+}
+
+
+
 void serbest_birakma( void ) {
     if (root != NULL) {
         struct Node* iter = root->next;
@@ -221,7 +238,8 @@ int main(int argc, char **argv) {
                 continue;
             }
 
-            // ........................................
+            root = tersle(root);
+            printf("Terse cevrildi.\n");
             enter_bekle();
         }
 
@@ -245,8 +263,8 @@ int main(int argc, char **argv) {
                 }
 
                 do {
-                    printf("Isim: %s\nSoyisim: %s\nTel No: %d\n\n",
-                            iter->isim, iter->soyisim, iter->tel);
+                    printf("Isim: %s\nSoyisim: %s\nTel No: %d\nAdres: %p\n\n",
+                            iter->isim, iter->soyisim, iter->tel, iter);
                     iter = iter->next;
                 } while (iter != root);
             }
