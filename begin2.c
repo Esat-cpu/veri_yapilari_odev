@@ -49,7 +49,7 @@ struct Node* ekle(struct Node* root, char* veri) {
 
     char* isim = strtok(veri, ", ");
     char* soyisim = strtok(NULL, ", ");
-    int tel = atoi(strtok(NULL, "}"));
+    int tel = atoi(strtok(NULL, ", "));
 
     // listenin boş olma durumu
     if (root == NULL) {
@@ -80,8 +80,8 @@ struct Node* ekle(struct Node* root, char* veri) {
         // değilse soyisim alfabetik olarak önde veya eşitse öne eklenir
         // iki şart da sağlanmazsa devam edilir
         int kontrol = strcmp(iter->next->isim, isim);
-        if (kontrol < 0 ||
-            (kontrol == 0 && strcmp(iter->next->soyisim, soyisim) <= 0))
+        if (kontrol > 0 ||
+            (kontrol == 0 && strcmp(iter->next->soyisim, soyisim) >= 0))
         {
             struct Node* new = malloc(sizeof(struct Node));
             yerlestir(new, isim, soyisim, tel, iter->next);
@@ -122,6 +122,25 @@ int oku(char* dosyaadi) {
 
     fclose(dosya);
     return 0;
+}
+
+
+
+// Dosyadan okunan verileri virgül ve boşluklardan ayırır
+// Bağlı listeye ekler
+void listele( void ) {
+    char* iter = birinci;
+    char* den = iter;
+
+    while (den != NULL) {
+        den = iter;
+        den = strchr(den+1, ',');
+        den = strchr(den+1, ',');
+        den = strchr(den+1, ',');
+        if (den) *den = '\0';
+        root = ekle(root, iter);
+        if (den) iter = den + 2;
+    }
 }
 
 
@@ -185,7 +204,8 @@ int main(int argc, char **argv) {
             if (okuma == 0) {
                 okundu = 1;
                 printf("Dosya Okundu.\n");
-                // ..............................
+                listele();
+                printf("Liste Olusturuldu.\n");
                 enter_bekle();
             } else {
                 fprintf(stderr, "Dosya Okunamadi.\n");
@@ -227,6 +247,7 @@ int main(int argc, char **argv) {
                 do {
                     printf("Isim: %s\nSoyisim: %s\nTel No: %d\n\n",
                             iter->isim, iter->soyisim, iter->tel);
+                    iter = iter->next;
                 } while (iter != root);
             }
 
