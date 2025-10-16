@@ -8,8 +8,8 @@
 // ürünlerin adı, satış miktarı ve stok miktarları bulunacak
 // Örnek: Biskevit, 10, 90
 
-// Menüden Bağlı listeyi oluştur seçildiği zaman çift yönlü bağlı listeye
-// ürünler en çok satılan ürün en başta olacak şekilde azalan sırada eklenecektir.
+// Menüden Bağlı listeyi oluştur seçildiği zaman ürünler çift yönlü bağlı listeye
+// en çok satılan ürün en başta olacak şekilde azalan sırada eklenecektir.
 
 // Menüden Satış gir seçilince kullanıcıdan ürün adı ve satış miktarı alınacak,
 // stok bitip bitmediği kontrölü yapılacak ve stokta varsa,
@@ -40,8 +40,8 @@ struct Node {
     struct Node* prev;
 
     char urunadi[MAX_ISIM];
-    int satis;
-    int stok;
+    unsigned satis;
+    unsigned stok;
 
     struct Node* next;
 };
@@ -60,8 +60,8 @@ void enter_bekle( void ) {
 
 
 
-void yerlestir(struct Node* eleman, char* urunadi, int satis, int stok, struct Node* prev, struct Node* next) {
-    eleman->urunadi = urunadi;
+void yerlestir(struct Node* eleman, char* urunadi, unsigned satis, unsigned stok, struct Node* prev, struct Node* next) {
+    strncpy(eleman->urunadi, urunadi, MAX_ISIM);
     eleman->satis = satis;
     eleman->stok = stok;
     eleman->prev = prev;
@@ -70,11 +70,13 @@ void yerlestir(struct Node* eleman, char* urunadi, int satis, int stok, struct N
 
 
 
+
 // Gelen veriyi ayrıştırır ve root'a ekler
 struct Node* ekle(struct Node* root, char* veri) {
     char* urunadi = strtok(veri, ", ");
-    int satis = atoi(strtok(NULL, ", "));
-    int stok = atoi(strtok(NULL, " \n"));
+    unsigned satis = strtoul(strtok(NULL, ", "), NULL, 10);
+    unsigned stok = strtoul(strtok(NULL, " \n"), NULL, 10);
+
 
     // liste başta boş ise
     if (root == NULL) {
@@ -87,6 +89,7 @@ struct Node* ekle(struct Node* root, char* veri) {
     if (satis > root->satis) {
         struct Node* new = malloc(sizeof(struct Node));
         yerlestir(new, urunadi, satis, stok, NULL, root);
+        root->prev = new;
         return new;
     }
 
@@ -94,7 +97,7 @@ struct Node* ekle(struct Node* root, char* veri) {
 
     // Döngü sonlandığında iter ya listenin sonunda olacak
     // ya da yeni satış iterden sonraki elemanın satışından büyük olacak
-    while (iter->next != NULL || satis <= iter->next->satis) {
+    while (iter->next != NULL && satis <= iter->next->satis) {
         iter = iter->next;
     }
 
@@ -104,6 +107,32 @@ struct Node* ekle(struct Node* root, char* veri) {
     if (new->next != NULL) new->next->prev = new;
 
     return root;
+}
+
+
+
+
+struct Node* sil(struct Node* root, struct Node* eleman) {
+    // silinecek eleman ilk eleman mı kontrolü
+    if (root == eleman) {
+        eleman = root->next;
+        if (eleman) eleman->prev = NULL;
+        return eleman;
+    }
+
+    // root'tan sonraki elemandan itibaren ara
+    for (struct Node* iter = root->next; iter; iter = iter->next) {
+        if (iter == eleman) {
+            if (eleman->next)
+                eleman->next->prev = eleman->prev;
+            eleman->prev->next = eleman->next;
+            free(eleman);
+            return root;
+        }
+    }
+
+    // eleman bulunamadıysa NULL dön
+    return NULL;
 }
 
 
@@ -122,7 +151,8 @@ int oku(char* dosyaadi) {
 
     char veri[MAX_CH];
 
-    while (fgets(veri, MAX_CH, dosya) != NULL) {
+    // Dosya sonuna veya tamamen boş bir satıra gelene kadar çalışır
+    while (fgets(veri, MAX_CH, dosya) != NULL && (veri[0] != '\n' && veri[0] != '\r')) {
         root = ekle(root, veri);
     }
 
@@ -139,9 +169,21 @@ void liste_yazdir(struct Node* root) {
     }
 
     while (root) {
-        printf("Urun: %s\nStok: %d\nSatis: %d\n\n", root->urunadi, root->stok, root->satis);
+        printf("Urun: %s\nStok: %u\nSatis: %u\n\n", root->urunadi, root->stok, root->satis);
         root = root->next;
     }
+}
+
+
+
+
+struct Node* bul(struct Node* head, char* urunadi) {
+    for (struct Node* iter = head; iter; iter = iter->next) {
+        if (strcmp(iter->urunadi, urunadi) == 0) {
+            return iter;
+        }
+    }
+    return NULL;
 }
 
 
@@ -160,8 +202,6 @@ void serbest_birakma( void ) {
         free(temp);
     }
 }
-
-
 
 
 
@@ -198,9 +238,12 @@ int main(int argc, char** argv) {
 
         // Dosya Okuma - Liste Oluşturma
         if (secim == 1) {
+            serbest_birakma();
+
             if (oku(dosyaadi) == 0) {
                 printf("Dosya Okundu.\n");
                 printf("Liste Olusturuldu.\n");
+                liste_yazdir(root);
                 enter_bekle();
             } else {
                 fprintf(stderr, "Dosya Okunamadi.\n");
@@ -210,7 +253,45 @@ int main(int argc, char** argv) {
 
         // Satis girme
         else if (secim == 2) {
-            ///////////////////////////////////////////////7
+            char urunadi[MAX_ISIM];
+            unsigned int satis;
+
+            printf("Urun adi girin: ");
+            fgets(urunadi, MAX_ISIM, stdin);
+            *strchr(urunadi, '\n') = '\0';
+
+            printf("Satis miktari girin: ");
+            scanf(" %u", &satis);
+            while ((c = getchar()) != '\n' && c != EOF);
+
+            struct Node* eleman = bul(root, urunadi);
+
+            if (!eleman) {
+                fprintf(stderr, "Girdiginiz urun listede bulunamadi.\n");
+                enter_bekle();
+                continue;
+            }
+
+            if (satis > eleman->stok) {
+                fprintf(stderr, "Stok yetersiz!\n");
+                enter_bekle();
+                continue;
+            }
+            else {
+                eleman->stok -= satis;
+                eleman->satis += satis;
+
+                char yeni_veri[MAX_CH];
+                snprintf(yeni_veri, MAX_CH, "%s, %u, %u", eleman->urunadi, eleman->satis, eleman->stok);
+
+                root = sil(root, eleman);
+                eleman = NULL;
+                root = ekle(root, yeni_veri);
+
+                printf("%s urununden %u adet satildi.\n", urunadi, satis);
+                liste_yazdir(root);
+            }
+
             enter_bekle();
         }
 
