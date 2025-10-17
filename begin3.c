@@ -117,6 +117,7 @@ struct Node* sil(struct Node* root, struct Node* eleman) {
     if (root == eleman) {
         eleman = root->next;
         if (eleman) eleman->prev = NULL;
+        free(root);
         return eleman;
     }
 
