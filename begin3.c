@@ -219,7 +219,7 @@ int main(int argc, char** argv) {
         puts("---------- Menu ----------");
         puts("1. Bagli Listeyi Olustur");
         puts("2. Satis Gir");
-        puts("3. Elemanlari ve adreslerini yaz");
+        puts("3. Elemanlari Yaz");
         puts("4. Cikis");
         printf("Secin: ");
 
