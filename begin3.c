@@ -112,33 +112,6 @@ struct Node* ekle(struct Node* root, char* veri) {
 
 
 
-struct Node* sil(struct Node* root, struct Node* eleman) {
-    // silinecek eleman ilk eleman mı kontrolü
-    if (root == eleman) {
-        eleman = root->next;
-        if (eleman) eleman->prev = NULL;
-        free(root);
-        return eleman;
-    }
-
-    // root'tan sonraki elemandan itibaren ara
-    for (struct Node* iter = root->next; iter; iter = iter->next) {
-        if (iter == eleman) {
-            if (eleman->next)
-                eleman->next->prev = eleman->prev;
-            eleman->prev->next = eleman->next;
-            free(eleman);
-            return root;
-        }
-    }
-
-    // eleman bulunamadıysa NULL dön
-    return NULL;
-}
-
-
-
-
 // dosya okunur ve her satırdaki veri
 // root'a ekle fonksiyonu ile eklenir
 int oku(char* dosyaadi) {
@@ -160,6 +133,7 @@ int oku(char* dosyaadi) {
     fclose(dosya);
     return 0;
 }
+
 
 
 
@@ -185,6 +159,22 @@ struct Node* bul(struct Node* head, char* urunadi) {
         }
     }
     return NULL;
+}
+
+
+
+
+// Verilen çift yönlü bağlı liste elemanını bir öne alır
+// kullanılmadan önce, önceki eleman NULL mu kontrolü yapılmalı
+struct Node* go_up(struct Node* root, struct Node* eleman) {
+    if (eleman->next)
+        eleman->next->prev = eleman->prev;
+    eleman->prev->next = eleman->next;
+    eleman->next = eleman->prev;
+    eleman->prev = eleman->prev->prev;
+    eleman->next->prev = eleman;
+    if (eleman->prev == NULL) return eleman;
+    else return root;
 }
 
 
@@ -219,7 +209,7 @@ int main(int argc, char** argv) {
         puts("---------- Menu ----------");
         puts("1. Bagli Listeyi Olustur");
         puts("2. Satis Gir");
-        puts("3. Elemanlari ve adreslerini yaz");
+        puts("3. Elemanlari yaz");
         puts("4. Cikis");
         printf("Secin: ");
 
@@ -282,12 +272,8 @@ int main(int argc, char** argv) {
                 eleman->stok -= satis;
                 eleman->satis += satis;
 
-                char yeni_veri[MAX_CH];
-                snprintf(yeni_veri, MAX_CH, "%s, %u, %u", eleman->urunadi, eleman->satis, eleman->stok);
-
-                root = sil(root, eleman);
-                eleman = NULL;
-                root = ekle(root, yeni_veri);
+                while (eleman->prev != NULL && eleman->satis > eleman->prev->satis)
+                    root = go_up(root, eleman);
 
                 printf("%s urununden %u adet satildi.\n", urunadi, satis);
                 liste_yazdir(root);
